@@ -11,6 +11,8 @@ public class Detector : MonoBehaviour
     public bool IsDetecting = false;
     private NPC npcScript;
 
+    private bool FirstFrame = true;
+
     void Start()
     {
         npcScript = GetComponent<NPC>();
@@ -19,6 +21,7 @@ public class Detector : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        
         Vector3 DirectionToPlayer = player.transform.position - transform.position;
         float Diffrence = Vector3.Dot(DirectionToPlayer, transform.forward);
         if(Diffrence >= 1f)
@@ -28,6 +31,10 @@ public class Detector : MonoBehaviour
             {
                 if(hitInfo.collider.gameObject == player)
                 {
+                    if(IsDetecting == false)
+                    {
+                        player.GetComponent<Player>().StartDetecting(gameObject);
+                    }
                     IsDetecting = true;
                 }
                 else
@@ -59,7 +66,15 @@ public class Detector : MonoBehaviour
             {
                 Detection -= Time.deltaTime * 5;
             }
+            else
+            {
+                if(FirstFrame == false)
+                {
+                    player.GetComponent<Player>().StopDetecting(gameObject);
+                }
+            }
         }
+        FirstFrame = false;
 
     }
 }
