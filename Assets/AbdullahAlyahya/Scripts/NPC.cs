@@ -13,6 +13,8 @@ public class NPC : MonoBehaviour
 
     public NavMeshAgent agent;
 
+    public Animator anim;
+
     public GameObject Head;
 
     public GameObject[] BotPlaces;
@@ -23,36 +25,77 @@ public class NPC : MonoBehaviour
     void Start()
     {
         detector = GetComponent<Detector>();
+        agent = GetComponent<NavMeshAgent>();
+        anim = GetComponent<Animator>();
     }
 
     void WalkToNewBotPlace()
     {
-        CanWalkToNewBotPlace = true;
+        if(detector.Detection <= 5f)
+        {
+            CanWalkToNewBotPlace = true;
+        }
     }
 
     void Update()
     {
-        if(detector.IsDetecting == true)
+        Vector3 direction = player.transform.position-Head.transform.position;
+        float diffrence = Vector3.Dot(direction, transform.forward);
+        if (Vector3.Distance(agent.destination, transform.position) <= 0.5f)
+        {
+            anim.SetBool("Walking", false);
+
+        }
+        else
+        {
+            anim.SetBool("Walking", true);
+        }
+        if (detector.IsDetecting == true)
         {
             if(detector.Detection >= 10f)
             {
                 agent.destination = player.transform.position;
                 transform.LookAt(player.transform.position);
-                Head.transform.LookAt(player.transform.position);
+                if (diffrence >= 0f)
+                {
+                    Head.transform.LookAt(player.transform.position);
+                }
 
-            }else if(detector.Detection >= 5f)
+            }
+            else if(detector.Detection >= 5f)
             {
                 agent.destination = transform.position;
                 transform.LookAt(player.transform.position);
-                Head.transform.LookAt(player.transform.position);
+                if(diffrence >= 0f)
+                {
+                    Head.transform.LookAt(player.transform.position);
+                }
             }
             else if(detector.Detection > 0)
             {
-                Head.transform.LookAt(player.transform.position);
+                if (diffrence >= 0f)
+                {
+                    Head.transform.LookAt(player.transform.position);
+                }
+            }
+            else
+            {
+                Head.transform.rotation = transform.rotation;
             }
         }
         else
         {
+            if(detector.Detection > 0f)
+            {
+                if (diffrence >= 0f)
+                {
+                    Head.transform.LookAt(player.transform.position);
+                }
+            }
+            else
+            {
+                Head.transform.rotation = transform.rotation;
+            }
             if (Vector3.Distance(agent.destination,transform.position) <= 0.5f)
             {
                 WalkingToBotPlace = false;
@@ -65,7 +108,7 @@ public class NPC : MonoBehaviour
                     agent.destination = BotPlace.transform.position;
                     WalkingToBotPlace = true;
                     CanWalkToNewBotPlace = false;
-                    Invoke("WalkToNewBotPlace", 30f);
+                    Invoke("WalkToNewBotPlace", 10f);
                 }
             }
         }

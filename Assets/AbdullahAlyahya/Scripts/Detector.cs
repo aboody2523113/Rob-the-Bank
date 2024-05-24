@@ -11,22 +11,41 @@ public class Detector : MonoBehaviour
     public bool IsDetecting = false;
     private NPC npcScript;
 
+    public GameObject Head;
+
     private bool FirstFrame = true;
+
+    private bool InPlayerArea = false;
 
     void Start()
     {
         npcScript = GetComponent<NPC>();
     }
 
-    // Update is called once per frame
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.gameObject == player)
+        {
+            InPlayerArea = true;
+
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject == player)
+        {
+            InPlayerArea = false;
+        }
+    }
     void Update()
     {
         
-        Vector3 DirectionToPlayer = player.transform.position - transform.position;
-        float Diffrence = Vector3.Dot(DirectionToPlayer, transform.forward);
-        if(Diffrence >= 1f)
+        Vector3 DirectionToPlayer = player.transform.position - Head.transform.position;
+        float Diffrence = Vector3.Dot(DirectionToPlayer, Head.transform.forward);
+        if(Diffrence >= 0f)
         {
-            Ray ray = new Ray(transform.position, DirectionToPlayer);
+            Ray ray = new Ray(Head.transform.position, DirectionToPlayer);
             if(Physics.Raycast(ray, out RaycastHit hitInfo,Mathf.Infinity))
             {
                 if(hitInfo.collider.gameObject == player)
@@ -39,18 +58,53 @@ public class Detector : MonoBehaviour
                 }
                 else
                 {
-                    IsDetecting = false;
+                    if (InPlayerArea == false)
+                    {
+                        IsDetecting = false;
+                    }
+                    else
+                    {
+                        if (IsDetecting == false)
+                        {
+                            player.GetComponent<Player>().StartDetecting(gameObject);
+                        }
+                        float PlayerDetectionSpeed = player.GetComponent<Player>().DetectionSpeed;
+                        IsDetecting = true;
+                        Detection += Time.deltaTime * DetectionSpeed * PlayerDetectionSpeed;
+                    }
 
                 }
             }
             else
             {
-                IsDetecting = false;
+                if (InPlayerArea == false)
+                {
+                    IsDetecting = false;
+                }
+                else
+                {
+                    if(IsDetecting == false)
+                    {
+                        player.GetComponent<Player>().StartDetecting(gameObject);
+                    }
+                    IsDetecting = true;
+                }
             }
         }
         else
         {
-            IsDetecting = false;
+
+            if(InPlayerArea == false) {
+                IsDetecting = false;
+            }
+            else
+            {
+                if (IsDetecting == false)
+                {
+                    player.GetComponent<Player>().StartDetecting(gameObject);
+                }
+                IsDetecting = true;
+            }
         }
 
         if (IsDetecting) {
@@ -64,7 +118,7 @@ public class Detector : MonoBehaviour
         {
             if(Detection > 0)
             {
-                Detection -= Time.deltaTime * 5;
+                Detection -= Time.deltaTime * 2f;
             }
             else
             {
