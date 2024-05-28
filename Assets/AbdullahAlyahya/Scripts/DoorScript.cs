@@ -6,17 +6,16 @@ public class DoorScript : MonoBehaviour
 {
     public GameObject player;
 
-    public GameObject frameDoor;
-
-    public GameObject openedFrame;
-
-    public GameObject closedFrame;
+    public Animator anim;
 
     public bool CanOpen;
 
     public bool Opened;
 
-
+    private void Start()
+    {
+        anim = GetComponent<Animator>();    
+    }
 
     public void OpenDoor()
     {
@@ -25,8 +24,7 @@ public class DoorScript : MonoBehaviour
             if(Opened == false)
             {
                 Opened = true;
-                frameDoor.transform.position = openedFrame.transform.position;
-                frameDoor.transform.rotation = openedFrame.transform.rotation;
+                anim.SetBool("Open", true);
                 GetComponent<BoxCollider>().isTrigger = true;
             }
             else
@@ -41,8 +39,7 @@ public class DoorScript : MonoBehaviour
         if(Opened == true)
         {
             Opened = false;
-            frameDoor.transform.position = closedFrame.transform.position;
-            frameDoor.transform.rotation = closedFrame.transform.rotation;
+            anim.SetBool("Open", false);
             GetComponent<BoxCollider>().isTrigger = false;
         }
         else
