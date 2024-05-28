@@ -9,6 +9,10 @@ public class NPC : MonoBehaviour
 
     public GameObject player;
 
+    public float Health;
+
+    public bool Dead;
+
     public Detector detector;
 
     public NavMeshAgent agent;
@@ -27,6 +31,7 @@ public class NPC : MonoBehaviour
         detector = GetComponent<Detector>();
         agent = GetComponent<NavMeshAgent>();
         anim = GetComponent<Animator>();
+        Health = 100f;
     }
 
     void WalkToNewBotPlace()
@@ -34,6 +39,29 @@ public class NPC : MonoBehaviour
         if(detector.Detection <= 5f)
         {
             CanWalkToNewBotPlace = true;
+        }
+    }
+    
+    void Death2()
+    {
+        gameObject.SetActive(false);
+    }
+    void OnDeath()
+    {
+        anim.SetBool("Death", true);
+        Dead = true;
+        Invoke("Death2", 1f);
+    }
+
+    public void Damage(float Dmg)
+    {
+        if(Health > 0)
+        {
+            Health -= Dmg;
+            if(Health <= 0)
+            {
+                OnDeath();
+            }
         }
     }
 

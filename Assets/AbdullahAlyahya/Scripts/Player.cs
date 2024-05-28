@@ -7,6 +7,8 @@ public class Player : MonoBehaviour
 {
     // Start is called before the first frame update
 
+    public List<string> Inventory;
+
     public GameObject barPrefab;
 
     public GameObject cam;
@@ -16,6 +18,9 @@ public class Player : MonoBehaviour
     public List<GameObject> Detectors;
 
     Dictionary<GameObject, GameObject[]> DetectorToBar = new Dictionary<GameObject, GameObject[]>();
+
+
+    public GameObject InteractText;
 
 
     private bool CheckObject(GameObject obj, GameObject[] array)
@@ -58,6 +63,40 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+        Ray ray = new Ray(transform.position, transform.forward);
+        if(Physics.Raycast(ray,out RaycastHit hitInfo, 50f))
+        {
+            Debug.Log(hitInfo.collider.name);
+            if (hitInfo.collider.gameObject.GetComponent<KeycardReader>() != null)
+            {
+                InteractText.SetActive(true);
+            }else if(hitInfo.collider.gameObject.GetComponent<DoorScript>() != null)
+            {
+                if (hitInfo.collider.gameObject.GetComponent<DoorScript>().CanOpen == true)
+                {
+                    InteractText.SetActive(true);
+                    if (Input.GetKeyDown(KeyCode.E))
+                    {
+                        hitInfo.collider.gameObject.GetComponent<DoorScript>().OpenDoor();
+                    }
+                }
+                else
+                {
+                    InteractText.SetActive(false);
+                }
+            }
+            else
+            {
+                InteractText.SetActive(false);
+            }
+        }
+        else
+        {
+            InteractText.SetActive(false);
+        }
+
+
         if(Detectors.Count >= 1)
         {
             for (int i = 0; i < Detectors.Count; i++)
