@@ -85,6 +85,13 @@ public class Player : MonoBehaviour
                 {
                     InteractText.SetActive(false);
                 }
+            }else if(hitInfo.collider.gameObject.GetComponent<VaultButton>() != null)
+            {
+                InteractText.SetActive(true);
+                if (Input.GetKeyDown(KeyCode.E))
+                {
+                    hitInfo.collider.gameObject.GetComponent<VaultButton>().Interact();
+                }
             }
             else
             {

@@ -12,6 +12,8 @@ public class PlayerMovement : MonoBehaviour
 
     public Animator anim;
 
+    public bool IsWalking;
+
     private void Start()
     {
         charcont = GetComponent<CharacterController>();
@@ -39,10 +41,12 @@ public class PlayerMovement : MonoBehaviour
 
             charcont.Move(movement * 2 * Time.deltaTime);
             anim.SetBool("Walking", true);
+            IsWalking = true;
         }
         else
         {
             anim.SetBool("Walking", false);
+            IsWalking = false;
         }
 
         if (!charcont.isGrounded)

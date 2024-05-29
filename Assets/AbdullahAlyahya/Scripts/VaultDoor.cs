@@ -4,15 +4,10 @@ using UnityEngine;
 
 public class VaultDoor : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public Animator anim;
+    public void OpenDoor()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        anim.SetBool("Open", true);
+        gameObject.GetComponent<BoxCollider>().enabled = false;
     }
 }
