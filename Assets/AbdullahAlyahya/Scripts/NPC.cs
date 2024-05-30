@@ -9,6 +9,10 @@ public class NPC : MonoBehaviour
 
     public GameObject player;
 
+    public GameObject GM;
+
+    public string[] Tools;
+
     public float Health;
 
     public bool Dead;
@@ -44,10 +48,25 @@ public class NPC : MonoBehaviour
     
     void Death2()
     {
+        if(Tools.Length > 0)
+        {
+            for(int i = 0; i < Tools.Length; i++)
+            {
+                GameObject tool = Instantiate(GM.GetComponent<GameManager>().tools[Tools[i]]);
+                tool.transform.position = transform.position;
+            }
+        }
+        if (detector.IsDetecting == true)
+        {
+            player.GetComponent<Player>().StopDetecting(gameObject);
+        }
         gameObject.SetActive(false);
     }
     void OnDeath()
     {
+        {
+            
+        }
         anim.SetBool("Death", true);
         Dead = true;
         Invoke("Death2", 1f);

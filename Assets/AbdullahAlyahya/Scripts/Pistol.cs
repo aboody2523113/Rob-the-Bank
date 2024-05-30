@@ -43,7 +43,14 @@ public class Pistol : MonoBehaviour
         if(Input.GetButton("Fire1")){
             if(CanShot == true){
                 CanShot = false;
-                anim.Play("Shot");
+                if(Aiming == true)
+                {
+                    anim.Play("AimingShot");
+                }
+                else
+                {
+                    anim.Play("Shot");
+                }
                 GameManager.GetComponent<GameManager>().PlayAudio(ShotSound);
                 Invoke("TurnCanShot",1f);
                 Ray ray = new Ray(cam.transform.position, cam.transform.forward);

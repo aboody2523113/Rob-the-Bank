@@ -15,7 +15,7 @@ public class KeycardReader : MonoBehaviour
     }
     public void Interact()
     {
-        if (player.GetComponent<Player>())
+        if (player.GetComponent<Player>().Inventory.Contains("Keycard"))
         {
             Door.GetComponent<DoorScript>().CanOpen = true;
             Invoke("CloseDoor", 5f);

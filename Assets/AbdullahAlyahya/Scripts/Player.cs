@@ -64,13 +64,17 @@ public class Player : MonoBehaviour
     void Update()
     {
 
-        Ray ray = new Ray(transform.position, transform.forward);
-        if(Physics.Raycast(ray,out RaycastHit hitInfo, 50f))
+        Ray ray = new Ray(cam.transform.position, cam.transform.forward);
+        if(Physics.Raycast(ray,out RaycastHit hitInfo, Mathf.Infinity))
         {
-            Debug.Log(hitInfo.collider.name);
+            Debug.Log(hitInfo.transform.gameObject.name);
             if (hitInfo.collider.gameObject.GetComponent<KeycardReader>() != null)
             {
                 InteractText.SetActive(true);
+                if (Input.GetKeyDown(KeyCode.E))
+                {
+                    hitInfo.collider.gameObject.GetComponent<KeycardReader>().Interact();
+                }
             }else if(hitInfo.collider.gameObject.GetComponent<DoorScript>() != null)
             {
                 if (hitInfo.collider.gameObject.GetComponent<DoorScript>().CanOpen == true)
@@ -87,10 +91,22 @@ public class Player : MonoBehaviour
                 }
             }else if(hitInfo.collider.gameObject.GetComponent<VaultButton>() != null)
             {
+                if (hitInfo.collider.gameObject.GetComponent<VaultButton>().IsOpened == false)
+                {
+                    InteractText.SetActive(true);
+                    if (Input.GetKeyDown(KeyCode.E))
+                    {
+
+                        hitInfo.collider.gameObject.GetComponent<VaultButton>().Interact();
+                    }
+                }
+            }else if(hitInfo.collider.GetComponent<Tool>() != null)
+            {
                 InteractText.SetActive(true);
                 if (Input.GetKeyDown(KeyCode.E))
                 {
-                    hitInfo.collider.gameObject.GetComponent<VaultButton>().Interact();
+                    hitInfo.collider.gameObject.GetComponent<Tool>().player = gameObject;
+                    hitInfo.collider.gameObject.GetComponent<Tool>().Interact();
                 }
             }
             else
